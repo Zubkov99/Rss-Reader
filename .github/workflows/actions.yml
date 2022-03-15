@@ -1,14 +1,13 @@
-name: My tests
-
+name: myTest
 on:
   - push
-jobs:
-  build:
+  - pull_request
 
+jobs:
+  lint:
     runs-on: ubuntu-latest
 
     strategy:
-      # Node versions list
       matrix:
         node-version: [14.x]
 
@@ -20,10 +19,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install
         run: |
-          npm install
+          npm ci
         env:
           CI: true
       - name: Run linter
-        # Run Linter
         run: |
-          npx eslint . 
+         npx eslint .

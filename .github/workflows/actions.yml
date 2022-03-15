@@ -1,9 +1,7 @@
-name: Node CI
+name: My tests
 
 on:
   - push
-  - pull_request
-
 jobs:
   build:
 

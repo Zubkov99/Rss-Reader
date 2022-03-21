@@ -1,4 +1,5 @@
 import 'bootstrap';
 import './style.css';
+import controller from './controller.js';
 
-console.log('its works');
+controller();

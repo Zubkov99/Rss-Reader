@@ -6,6 +6,8 @@ import render from './render.js';
 
 const state = {
   urls: [],
+  feeds: [],
+  posts: [],
 };
 
 const watchedState = onChange(state, () => {

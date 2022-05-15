@@ -1,51 +1,64 @@
 /* eslint-disable no-undef */
 import * as yup from 'yup';
 import axios from 'axios';
+import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
-let idCounter = 1;
-const readStream = (query, state) => {
+const parseXml = (servResponse, model) => {
   const parser = new DOMParser();
 
-  axios.get(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(query)}`)
-    .then((response) => {
-      const doc = parser.parseFromString(response.data.contents, 'text/xml');
-      const feedTitle = doc.querySelector('title').textContent;
-      const feedDescription = doc.querySelector('description').textContent;
+  const contentId = uuidv4();
 
-      const posts = doc.querySelectorAll('item');
+  const doc = parser.parseFromString(servResponse.data.contents, 'text/xml');
+  const feedTitle = doc.querySelector('title').textContent;
+  const feedDescription = doc.querySelector('description').textContent;
+  const posts = doc.querySelectorAll('item');
 
-      state.feeds.push({ title: feedTitle, description: feedDescription, id: idCounter });
+  if (!_.find(model.feeds, { title: feedTitle, description: feedDescription })) {
+    model.feeds.push({ title: feedTitle, description: feedDescription, id: contentId });
+  }
 
-      posts.forEach((item) => {
-        const link = item.querySelector('link').textContent;
-        const title = item.querySelector('title').textContent;
-        const description = item.querySelector('description').textContent;
-        state.posts.push({
-          link, title, description, id: idCounter,
-        });
+  posts.forEach((item) => {
+    const link = item.querySelector('link').textContent;
+    const title = item.querySelector('title').textContent;
+    const description = item.querySelector('description').textContent;
+    if (!_.find(model.posts, {
+      link, title, description,
+    })) {
+      model.posts.push({
+        link, title, description, id: contentId,
       });
+    }
+  });
+};
 
-      idCounter += 1;
+const readStream = (query, state) => {
+  axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
+    .then((response) => {
+      parseXml(response, state);
     })
     .catch((error) => {
       throw error;
+    })
+    .finally(() => {
+      setTimeout(() => {
+        state.urls.forEach((item) => readStream(item, state));
+        console.log('New request received');
+      }, 6000);
     });
 };
 
 const controller = (state) => {
   const watchedState = state;
   const shema = yup.string().url();
-  // eslint-disable-next-line no-undef
   const form = document.querySelector('.rss-form');
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    // eslint-disable-next-line no-undef
     const formData = new FormData(event.target);
     const url = formData.get('url');
     shema.isValid(url)
       .then((data) => {
-        if (data === false || watchedState.urls.includes(url)) throw new Error('Its false, man');
+        if (data === false || watchedState.urls.includes(url)) throw new Error('Is this an invalid or duplicate link');
         watchedState.urls.push(url);
         watchedState.validFlug = true;
         return url;

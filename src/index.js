@@ -12,6 +12,7 @@ const state = {
 
 const watchedState = onChange(state, () => {
   render(state);
+  console.log('update');
 });
 
 controller(watchedState);

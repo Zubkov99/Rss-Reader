@@ -19,7 +19,7 @@ const feedsConteiner = document.querySelector('.feeds');
 const postsConteiner = document.querySelector('.posts');
 
 const renderPosts = (data) => {
-  postsConteiner.innerHTML = '';
+  // postsConteiner.innerHTML = '';
 
   const feedsHeader = document.createElement('h2');
   feedsHeader.textContent = 'Посты';
@@ -40,13 +40,13 @@ const renderPosts = (data) => {
     postsLink.href = link;
     postsLink.textContent = i18nextInstance.t('posts.link');
 
-    cardConteiner.append(feedsTitle, feedsDescription, postsLink);
+    cardConteiner.append(feedsTitle, postsLink);
     postsConteiner.append(cardConteiner);
   });
 };
 
 const renderFeeds = (data) => {
-  feedsConteiner.innerHTML = '';
+  // feedsConteiner.innerHTML = '';
   const feedsHeader = document.createElement('h2');
   feedsHeader.textContent = 'Фиды';
   feedsConteiner.append(feedsHeader);
@@ -74,6 +74,9 @@ const renderFeeds = (data) => {
 };
 
 const render = (state) => {
+  feedsConteiner.innerHTML = '';
+  postsConteiner.innerHTML = '';
+
   const validClass = 'is-invalid';
   const { posts, feeds } = state;
 

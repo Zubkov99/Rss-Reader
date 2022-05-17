@@ -4,15 +4,21 @@ import './style.css';
 import controller from './controller.js';
 import render from './render.js';
 
-const state = {
-  urls: [],
-  feeds: [],
-  posts: [],
-  modal: null,
+const rssReader = () => {
+  const state = {
+    urls: [],
+    feeds: [],
+    posts: [],
+    modal: null,
+  };
+
+  const watchedState = onChange(state, () => {
+    render(state);
+  });
+
+  controller(watchedState);
 };
 
-const watchedState = onChange(state, () => {
-  render(state);
-});
+rssReader();
 
-controller(watchedState);
+export default rssReader;

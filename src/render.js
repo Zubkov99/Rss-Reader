@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import i18next from 'i18next';
+import _ from 'lodash';
 import ru from './localText.js';
 
 const i18nextInstance = i18next.createInstance();
@@ -18,29 +19,52 @@ const feedback = document.querySelector('.feedback');
 const feedsConteiner = document.querySelector('.feeds');
 const postsConteiner = document.querySelector('.posts');
 
-const renderPosts = (data) => {
-  // postsConteiner.innerHTML = '';
+const renderModal = (model) => {
+  if (!model.modal) return;
+  const { title, description, link } = _.find(model.posts, { id: model.modal });
+  const modalTitle = document.querySelector('.modal-title');
+  const modalBody = document.querySelector('.modal-body');
+  const modalButton = document.querySelector('#modal_button');
+  modalButton.setAttribute('href', link);
+  modalTitle.textContent = title;
+  modalBody.textContent = description;
+};
 
+const renderPosts = (data) => {
   const feedsHeader = document.createElement('h2');
   feedsHeader.textContent = 'Посты';
 
   postsConteiner.append(feedsHeader);
 
-  data.forEach(({ title, description, link }) => {
+  data.forEach(({
+    title, link, id, isRead,
+  }) => {
     const cardConteiner = document.createElement('div');
-    cardConteiner.classList.add('post-item', 'card', 'bg-light', 'p-3', 'mt-3');
+    cardConteiner.classList.add('post-item', 'bg-light', 'p-3', 'mt-3', 'list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
     const feedsTitle = document.createElement('h5');
     feedsTitle.textContent = title;
 
-    const feedsDescription = document.createElement('p');
-    feedsDescription.textContent = description;
-
     const postsLink = document.createElement('a');
-    postsLink.href = link;
-    postsLink.textContent = i18nextInstance.t('posts.link');
+    if (!isRead) {
+      postsLink.classList.add('fw-normal');
+    } else {
+      postsLink.classList.remove('fw-normal');
+      postsLink.classList.add('fw-bold');
+    }
 
-    cardConteiner.append(feedsTitle, postsLink);
+    postsLink.href = link;
+    postsLink.textContent = title;
+    postsLink.setAttribute('target', '_blank');
+
+    const button = document.createElement('button');
+    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    button.setAttribute('data-id', id);
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#modal');
+    button.textContent = 'Просмотр';
+
+    cardConteiner.append(postsLink, button);
     postsConteiner.append(cardConteiner);
   });
 };
@@ -94,6 +118,7 @@ const render = (state) => {
   }
   renderPosts(posts);
   renderFeeds(feeds);
+  renderModal(state);
 };
 
 export default render;

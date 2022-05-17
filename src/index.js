@@ -8,11 +8,11 @@ const state = {
   urls: [],
   feeds: [],
   posts: [],
+  modal: null,
 };
 
 const watchedState = onChange(state, () => {
   render(state);
-  console.log('update');
 });
 
 controller(watchedState);

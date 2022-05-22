@@ -8,4 +8,4 @@ serve:
 	npm run serve
 
 install:
-	npm install
+	npm ci

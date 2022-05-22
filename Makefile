@@ -6,3 +6,6 @@ build:
 
 serve:
 	npm run serve
+
+install:
+	npm install

@@ -1,8 +1,8 @@
 import 'bootstrap';
 import onChange from 'on-change';
 import './style.css';
+import render from './render/render.js';
 import controller from './controller.js';
-import render from './render.js';
 
 const rssReader = () => {
   const state = {
@@ -10,6 +10,8 @@ const rssReader = () => {
     feeds: [],
     posts: [],
     modal: null,
+    networkStatus: true,
+    waitResponse: false,
   };
 
   const watchedState = onChange(state, () => {

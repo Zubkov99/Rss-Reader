@@ -1,11 +1,11 @@
 const ru = {
   translation: {
     validFeedback: {
-      invalid: 'Невальдная, либо ранее загруженная ссылка',
+      invalid: 'Невальдная ссылка',
       valid: 'RSS загружен',
-    },
-    posts: {
-      link: 'Подробнее по ссылке',
+      notUnique: 'Ссылка уже была загружена ранее',
+      networkError: 'Ошибка сети',
+      waitResponse: 'Ждем ответа сети',
     },
   },
 };

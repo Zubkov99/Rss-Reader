@@ -36,9 +36,12 @@ const parseXml = (servResponse, model) => {
 const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
+      state.networkStatus = true;
+      if (!state.urls.includes(query)) state.urls.push(query);
       parseXml(response, state);
     })
     .catch((error) => {
+      state.networkStatus = false;
       throw error;
     })
     .finally(() => {
@@ -50,25 +53,36 @@ const readStream = (query, state) => {
 };
 
 const controller = (state) => {
-  const watchedState = state;
-  const shema = yup.string().url();
+  const shema = yup.string().url().test((value) => value.includes('rss'));
+
   const form = document.querySelector('.rss-form');
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const url = formData.get('url').trim();
     shema.isValid(url)
       .then((data) => {
-        if (data === false || watchedState.urls.includes(url)) throw new Error('Is this an invalid or duplicate link');
-        watchedState.urls.push(url);
-        watchedState.validFlug = true;
+        if (!data) {
+          state.validFlug = false;
+          state.uniqFlug = true;
+          throw new Error('Is this an invalid link');
+        }
+        if (state.urls.includes(url)) {
+          state.uniqFlug = false;
+          state.validFlug = true;
+          throw new Error('Is this not a unique link');
+        }
+        state.validFlug = true;
+        state.uniqFlug = true;
         return url;
       })
       .then((urlQuery) => {
+        state.waitResponse = true;
         readStream(urlQuery, state);
       })
-      .catch(() => {
-        watchedState.validFlug = false;
+      .finally(() => {
+        state.waitResponse = false;
       });
   });
 
@@ -76,6 +90,7 @@ const controller = (state) => {
   postsConteiner.addEventListener('click', (event) => {
     const { target } = event;
     const buttonsId = target.getAttribute('data-id');
+    console.log('test');
     if (!buttonsId) return;
     state.posts.forEach((item) => {
       if (item.id === buttonsId) item.isRead = true;

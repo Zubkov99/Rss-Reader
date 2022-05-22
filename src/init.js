@@ -17,7 +17,6 @@ const init = () => {
   const watchedState = onChange(state, () => {
     render(state);
   });
-
   controller(watchedState);
 };
 

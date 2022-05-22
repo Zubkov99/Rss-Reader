@@ -8,7 +8,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const isProduction = process.env.NODE_ENV == "production";
 
 const config = {
-  entry: "./src/index.js",
+  entry: "./src/init.js",
   output: {
     path: path.resolve(__dirname, "dist"),
   },
@@ -32,7 +32,7 @@ const config = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/index.html",
+      template: "./index.html",
     }),
     new MiniCssExtractPlugin({
       filename: "[name].css"

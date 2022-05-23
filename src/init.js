@@ -12,6 +12,7 @@ const init = () => {
     modal: null,
     networkStatus: true,
     waitResponse: false,
+    urlHaveRss: false,
   };
 
   const watchedState = onChange(state, () => {

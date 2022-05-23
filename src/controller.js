@@ -5,15 +5,25 @@ import axios from 'axios';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
-const parseXml = (servResponse, model) => {
-  const parser = new DOMParser();
+const checkUrl = (document) => document.querySelector('parsererror');
 
+const parseXml = (servResponse, model, query) => {
+  const parser = new DOMParser();
   const doc = parser.parseFromString(servResponse.data.contents, 'text/xml');
+  if (checkUrl(doc)) {
+    model.urlHaveRss = false;
+    return;
+  }
+  model.urlHaveRss = true;
+  if (!model.urls.includes(query) && model.urlHaveRss) {
+    model.urls.push(query);
+  }
   const feedTitle = doc.querySelector('title').textContent;
   const feedDescription = doc.querySelector('description').textContent;
   const posts = doc.querySelectorAll('item');
 
   if (!_.find(model.feeds, { title: feedTitle, description: feedDescription })) {
+    model.urlHaveRss = true;
     model.feeds.push({ title: feedTitle, description: feedDescription });
   }
 
@@ -37,8 +47,7 @@ const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
       state.networkStatus = true;
-      if (!state.urls.includes(query)) state.urls.push(query);
-      parseXml(response, state);
+      parseXml(response, state, query);
     })
     .catch((error) => {
       state.networkStatus = false;
@@ -53,8 +62,7 @@ const readStream = (query, state) => {
 };
 
 const controller = (state) => {
-  const shema = yup.string().url().test((value) => value.includes('rss'));
-
+  const shema = yup.string().url();
   const form = document.querySelector('.rss-form');
 
   form.addEventListener('submit', (event) => {
@@ -90,7 +98,6 @@ const controller = (state) => {
   postsConteiner.addEventListener('click', (event) => {
     const { target } = event;
     const buttonsId = target.getAttribute('data-id');
-    console.log('test');
     if (!buttonsId) return;
     state.posts.forEach((item) => {
       if (item.id === buttonsId) item.isRead = true;

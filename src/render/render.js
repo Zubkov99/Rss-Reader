@@ -22,6 +22,8 @@ const postsConteiner = document.querySelector('.posts');
 const invalidClass = 'is-invalid';
 
 const renderInvalidInput = (key) => {
+  // feedsConteiner.innerHTML = '';
+  // postsConteiner.innerHTML = '';
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
   feedback.textContent = i18nextInstance.t(`validFeedback.${key}`);
@@ -31,28 +33,27 @@ const renderInvalidInput = (key) => {
 // eslint-disable-next-line consistent-return
 const render = (state) => {
   const {
-    posts, feeds, networkStatus, validFlug, uniqFlug, waitResponse,
+    posts, feeds, networkStatus, validFlug, uniqFlug, waitResponse, urlHaveRss,
   } = state;
   if (!networkStatus) {
-    feedsConteiner.innerHTML = '';
-    postsConteiner.innerHTML = '';
     return renderInvalidInput('networkError');
   }
-
   if (waitResponse) feedback.textContent = i18nextInstance.t('validFeedback.waitResponse');
 
   if (!validFlug) {
     renderInvalidInput('invalid');
   } else if (!uniqFlug) {
     renderInvalidInput('notUnique');
-  } else {
+  } else if (!urlHaveRss) {
+    renderInvalidInput('rssMissing')
+  } else if (validFlug && urlHaveRss && uniqFlug) {
     feedback.textContent = i18nextInstance.t('validFeedback.valid');
     feedback.classList.remove('text-danger');
     feedback.classList.add('text-success');
     input.classList.remove(invalidClass);
     form.reset();
   }
-  if (validFlug && uniqFlug) {
+  if (validFlug && uniqFlug && urlHaveRss) {
     renderPosts(posts, postsConteiner);
     renderFeeds(feeds, feedsConteiner);
     renderModal(state);

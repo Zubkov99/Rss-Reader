@@ -6,6 +6,7 @@ const ru = {
       notUnique: 'RSS уже существует',
       networkError: 'Ошибка сети',
       waitResponse: 'Ждем ответа сети',
+      rssMissing: 'Ресурс не содержит валидный RSS',
     },
   },
 };

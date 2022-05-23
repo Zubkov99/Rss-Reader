@@ -26,14 +26,12 @@ const renderPosts = (data, postsConteiner) => {
     postsLink.textContent = title;
     postsLink.setAttribute('target', '_blank');
     postsLink.setAttribute('data-id', id);
-
     const button = document.createElement('button');
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
     button.setAttribute('data-id', id);
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.textContent = 'Просмотр';
-
     cardConteiner.append(postsLink, button);
     postsConteiner.append(cardConteiner);
   });

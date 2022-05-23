@@ -35,7 +35,7 @@ const render = (state) => {
   } = state;
   if (!networkStatus) {
     return renderInvalidInput('networkError');
-  };
+  }
   if (waitResponse) feedback.textContent = i18nextInstance.t('validFeedback.waitResponse');
 
   if (!validFlug) {

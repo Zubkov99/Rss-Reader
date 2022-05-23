@@ -16,10 +16,10 @@ const renderPosts = (data, postsConteiner) => {
 
     const postsLink = document.createElement('a');
     if (!isRead) {
-      postsLink.classList.add('fw-normal');
-    } else {
       postsLink.classList.remove('fw-normal');
       postsLink.classList.add('fw-bold');
+    } else {
+      postsLink.classList.add('fw-normal');
     }
 
     postsLink.href = link;

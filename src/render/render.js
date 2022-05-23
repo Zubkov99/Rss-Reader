@@ -22,8 +22,6 @@ const postsConteiner = document.querySelector('.posts');
 const invalidClass = 'is-invalid';
 
 const renderInvalidInput = (key) => {
-  // feedsConteiner.innerHTML = '';
-  // postsConteiner.innerHTML = '';
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
   feedback.textContent = i18nextInstance.t(`validFeedback.${key}`);

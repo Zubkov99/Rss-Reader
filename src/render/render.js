@@ -43,7 +43,7 @@ const render = (state) => {
   } else if (!uniqFlug) {
     renderInvalidInput('notUnique');
   } else if (!urlHaveRss) {
-    renderInvalidInput('rssMissing')
+    renderInvalidInput('rssMissing');
   } else if (validFlug && urlHaveRss && uniqFlug) {
     feedback.textContent = i18nextInstance.t('validFeedback.valid');
     feedback.classList.remove('text-danger');

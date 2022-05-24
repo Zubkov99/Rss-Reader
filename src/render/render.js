@@ -33,17 +33,17 @@ const renderValidInput = () => {
   feedback.classList.add('text-success');
   input.classList.remove(invalidClass);
   form.reset();
-}
+};
 
 // eslint-disable-next-line consistent-return
 const render = (state) => {
   const {
     posts, feeds, invalidKey,
   } = state;
-  
+
   console.log(invalidKey);
-  if(invalidKey) {
-    renderInvalidInput(invalidKey)
+  if (invalidKey) {
+    renderInvalidInput(invalidKey);
     return;
   }
 

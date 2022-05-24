@@ -23,7 +23,6 @@ const parseXml = (servResponse, model, query) => {
   const posts = doc.querySelectorAll('item');
 
   if (!_.find(model.feeds, { title: feedTitle, description: feedDescription })) {
-    // model.urlHaveRss = true;
     model.feeds.push({ title: feedTitle, description: feedDescription });
   }
 
@@ -47,12 +46,10 @@ const parseXml = (servResponse, model, query) => {
 const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
-      // state.networkStatus = true;
       parseXml(response, state, query);
     })
     .catch((error) => {
       state.invalidKey = 'networkError';
-      // state.networkStatus = false;
       throw error;
     })
     .finally(() => {
@@ -75,22 +72,12 @@ const controller = (state) => {
       .then((data) => {
         if (!data) {
           state.invalidKey = 'invalidUrl';
-          // state.validFlug = false;
-          // state.uniqFlug = true;
           throw new Error('Is this an invalid link');
         }
-        console.log(state.urls.includes(url));
-        console.log(state.urls);
         if (state.urls.includes(url)) {
-          // console.log('Я все перезаписал, проблема дальше');
           state.invalidKey = 'notUnique';
-          // state.uniqFlug = false;
-          // state.validFlug = true;
-          // model.urlHaveRss = true;
           throw new Error('Is this not a unique link');
         }
-        // state.validFlug = true;
-        // state.uniqFlug = true;
         return url;
       })
       .then((urlQuery) => {

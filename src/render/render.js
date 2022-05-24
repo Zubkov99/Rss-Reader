@@ -41,7 +41,6 @@ const render = (state) => {
     posts, feeds, invalidKey,
   } = state;
 
-  console.log(invalidKey);
   if (invalidKey) {
     renderInvalidInput(invalidKey);
     return;

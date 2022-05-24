@@ -10,6 +10,7 @@ const init = () => {
     feeds: [],
     posts: [],
     modal: null,
+    invalidKey: null,
     networkStatus: true,
     waitResponse: false,
     urlHaveRss: false,

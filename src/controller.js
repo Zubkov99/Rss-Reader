@@ -11,11 +11,11 @@ const parseXml = (servResponse, model, query) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(servResponse.data.contents, 'text/xml');
   if (checkUrl(doc)) {
+    model.invalidKey = 'rssMissing';
     model.urlHaveRss = false;
     return;
   }
-  model.urlHaveRss = true;
-  if (!model.urls.includes(query) && model.urlHaveRss) {
+  if (!model.urls.includes(query)) {
     model.urls.push(query);
   }
   const feedTitle = doc.querySelector('title').textContent;
@@ -23,7 +23,7 @@ const parseXml = (servResponse, model, query) => {
   const posts = doc.querySelectorAll('item');
 
   if (!_.find(model.feeds, { title: feedTitle, description: feedDescription })) {
-    model.urlHaveRss = true;
+    // model.urlHaveRss = true;
     model.feeds.push({ title: feedTitle, description: feedDescription });
   }
 
@@ -39,6 +39,7 @@ const parseXml = (servResponse, model, query) => {
       model.posts.push({
         link, title, description, isRead, id: contentId,
       });
+      model.invalidKey = null;
     }
   });
 };
@@ -46,11 +47,12 @@ const parseXml = (servResponse, model, query) => {
 const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
-      state.networkStatus = true;
+      // state.networkStatus = true;
       parseXml(response, state, query);
     })
     .catch((error) => {
-      state.networkStatus = false;
+      state.invalidKey = 'networkError';
+      // state.networkStatus = false;
       throw error;
     })
     .finally(() => {
@@ -72,17 +74,23 @@ const controller = (state) => {
     shema.isValid(url)
       .then((data) => {
         if (!data) {
-          state.validFlug = false;
-          state.uniqFlug = true;
+          state.invalidKey = 'invalidUrl';
+          // state.validFlug = false;
+          // state.uniqFlug = true;
           throw new Error('Is this an invalid link');
         }
+        console.log(state.urls.includes(url));
+        console.log(state.urls);
         if (state.urls.includes(url)) {
-          state.uniqFlug = false;
-          state.validFlug = true;
+          // console.log('Я все перезаписал, проблема дальше');
+          state.invalidKey = 'notUnique';
+          // state.uniqFlug = false;
+          // state.validFlug = true;
+          // model.urlHaveRss = true;
           throw new Error('Is this not a unique link');
         }
-        state.validFlug = true;
-        state.uniqFlug = true;
+        // state.validFlug = true;
+        // state.uniqFlug = true;
         return url;
       })
       .then((urlQuery) => {

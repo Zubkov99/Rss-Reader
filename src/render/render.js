@@ -27,35 +27,30 @@ const renderInvalidInput = (key) => {
   feedback.textContent = i18nextInstance.t(`validFeedback.${key}`);
   input.classList.add(invalidClass);
 };
+const renderValidInput = () => {
+  feedback.textContent = i18nextInstance.t('validFeedback.valid');
+  feedback.classList.remove('text-danger');
+  feedback.classList.add('text-success');
+  input.classList.remove(invalidClass);
+  form.reset();
+}
 
 // eslint-disable-next-line consistent-return
 const render = (state) => {
   const {
-    posts, feeds, networkStatus, validFlug, uniqFlug, waitResponse, urlHaveRss,
+    posts, feeds, invalidKey,
   } = state;
-  if (!networkStatus) {
-    return renderInvalidInput('networkError');
+  
+  console.log(invalidKey);
+  if(invalidKey) {
+    renderInvalidInput(invalidKey)
+    return;
   }
-  if (waitResponse) feedback.textContent = i18nextInstance.t('validFeedback.waitResponse');
 
-  if (!validFlug) {
-    renderInvalidInput('invalid');
-  } else if (!uniqFlug) {
-    renderInvalidInput('notUnique');
-  } else if (!urlHaveRss) {
-    renderInvalidInput('rssMissing');
-  } else if (validFlug && urlHaveRss && uniqFlug) {
-    feedback.textContent = i18nextInstance.t('validFeedback.valid');
-    feedback.classList.remove('text-danger');
-    feedback.classList.add('text-success');
-    input.classList.remove(invalidClass);
-    form.reset();
-  }
-  if (validFlug && uniqFlug && urlHaveRss) {
-    renderPosts(posts, postsConteiner);
-    renderFeeds(feeds, feedsConteiner);
-    renderModal(state);
-  }
+  renderValidInput();
+  renderPosts(posts, postsConteiner);
+  renderFeeds(feeds, feedsConteiner);
+  renderModal(state);
 };
 
 export default render;

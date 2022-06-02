@@ -27,6 +27,13 @@ const renderInvalidInput = (key) => {
   feedback.textContent = i18nextInstance.t(`validFeedback.${key}`);
   input.classList.add(invalidClass);
 };
+
+const renerLoadInput = () => {
+  feedback.classList.remove('text-danger');
+  feedback.classList.remove('text-success');
+  feedback.textContent = i18nextInstance.t('validFeedback.waitResponse');
+};
+
 const renderValidInput = () => {
   feedback.textContent = i18nextInstance.t('validFeedback.valid');
   feedback.classList.remove('text-danger');
@@ -35,20 +42,25 @@ const renderValidInput = () => {
   form.reset();
 };
 
-// eslint-disable-next-line consistent-return
 const render = (state) => {
   const {
     posts, feeds, invalidKey,
   } = state;
+
+  if (state.waitResponse) {
+    renerLoadInput();
+  }
 
   if (invalidKey) {
     renderInvalidInput(invalidKey);
     return;
   }
 
-  renderValidInput();
-  renderPosts(posts, postsConteiner);
-  renderFeeds(feeds, feedsConteiner);
+  if (state.canRender === true) {
+    renderValidInput();
+    renderPosts(posts, postsConteiner);
+    renderFeeds(feeds, feedsConteiner);
+  }
   renderModal(state);
 };
 

@@ -49,19 +49,25 @@ const readStream = (query, state) => {
     .then((response) => {
       console.log('New request received');
       parseXml(response, state, query);
+      state.canRender = true;
     })
     .catch((error) => {
       state.invalidKey = 'networkError';
       throw error;
+    })
+    .finally(() => {
+      state.canRender = false;
     });
 };
 
 const getNewContent = (state) => {
+  const timeToWait = 5000;
+
   Promise.allSettled(state.urls.map(((item) => {
     readStream(item, state);
   })))
     .finally(() => {
-      setTimeout(() => getNewContent(state), 5000);
+      setTimeout(() => getNewContent(state), timeToWait);
     });
 };
 

@@ -46,17 +46,21 @@ const parseXml = (servResponse, model, query) => {
 const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
+      console.log('New request received');
       parseXml(response, state, query);
     })
     .catch((error) => {
       state.invalidKey = 'networkError';
       throw error;
-    })
+    });
+};
+
+const getNewContent = (state) => {
+  Promise.allSettled(state.urls.map(((item) => {
+    readStream(item, state);
+  })))
     .finally(() => {
-      setTimeout(() => {
-        state.urls.forEach((item) => readStream(item, state));
-        console.log('New request received');
-      }, 6000);
+      setTimeout(() => getNewContent(state), 5000);
     });
 };
 
@@ -99,6 +103,8 @@ const controller = (state) => {
     });
     state.modal = buttonsId;
   });
+
+  getNewContent(state);
 };
 
 export default controller;

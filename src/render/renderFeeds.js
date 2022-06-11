@@ -1,7 +1,11 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-undef */
+import i18nextInstance from '../locales/index.js';
+
 const renderFeeds = (data, feedsConteiner) => {
   feedsConteiner.innerHTML = '';
   const feedsHeader = document.createElement('h2');
-  feedsHeader.textContent = 'Фиды';
+  feedsHeader.textContent = i18nextInstance.t('headers.feeds');
   feedsConteiner.append(feedsHeader);
 
   const feedsWrapper = document.createElement('div');

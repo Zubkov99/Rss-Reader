@@ -1,18 +1,9 @@
-import i18next from 'i18next';
-import ru from '../localText.js';
+/* eslint-disable no-undef */
+import onChange from 'on-change';
+import i18nextInstance from '../locales/index.js';
 import renderFeeds from './renderFeeds.js';
 import renderPosts from './renderPosts.js';
 import renderModal from './renderModal.js';
-
-const i18nextInstance = i18next.createInstance();
-
-i18nextInstance.init({
-  lng: 'ru',
-  debug: true,
-  resources: {
-    ru,
-  },
-});
 
 const form = document.querySelector('.rss-form');
 const input = document.querySelector('#url-input');
@@ -42,26 +33,57 @@ const renderValidInput = () => {
   form.reset();
 };
 
-const render = (state) => {
-  const {
-    posts, feeds, invalidKey,
-  } = state;
+const renderInput = (inputStatus, state) => {
+  const { inputType } = state;
 
-  if (state.waitResponse) {
-    renerLoadInput();
+  switch (inputType) {
+    case 'waitResponse':
+      renerLoadInput();
+      break;
+    case 'rssReceived':
+      renderValidInput();
+      break;
+    default:
+      renderInvalidInput(inputType);
+      break;
   }
-
-  if (invalidKey) {
-    renderInvalidInput(invalidKey);
-    return;
-  }
-
-  if (state.canRender === true) {
-    renderValidInput();
-    renderPosts(posts, postsConteiner);
-    renderFeeds(feeds, feedsConteiner);
-  }
-  renderModal(state);
 };
 
-export default render;
+// const render = (state) => {
+//   const {
+//     posts, feeds, invalidKey,
+//   } = state;
+
+//   if (state.waitResponse) {
+//     renerLoadInput();
+//   }
+
+//   if (invalidKey) {
+//     renderInvalidInput(invalidKey);
+//     return;
+//   }
+
+//   if (state.canRender === true) {
+//     renderValidInput();
+//     renderPosts(posts, postsConteiner);
+//     renderFeeds(feeds, feedsConteiner);
+//   }
+//   renderModal(state);
+// };
+
+const watch = (initialState) => onChange(initialState, (path, value) => {
+  if (path === 'inputType') {
+    // console.log(path, value, previousValue, applyData);
+    renderInput(value, initialState);
+  }
+  if (path === 'urls' || path === 'posts' || path === 'feeds') {
+    renderFeeds(initialState.feeds, feedsConteiner);
+    renderPosts(initialState.posts, postsConteiner);
+  }
+  // console.log(path, value);
+  renderModal(initialState);
+});
+
+export default watch;
+
+// export default render;

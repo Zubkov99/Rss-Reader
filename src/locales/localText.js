@@ -8,6 +8,11 @@ const ru = {
       waitResponse: 'Ждем ответа сети',
       rssMissing: 'Ресурс не содержит валидный RSS',
     },
+    headers: {
+      posts: 'Посты',
+      feeds: 'Фиды',
+      button: 'Просмотр',
+    },
   },
 };
 

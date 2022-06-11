@@ -1,8 +1,7 @@
 import 'bootstrap';
-import onChange from 'on-change';
 import './style.css';
-import render from './render/render.js';
-import controller from './controller.js';
+import watch from './render/render.js';
+import controller from './handler/controller.js';
 
 const init = () => {
   const state = {
@@ -15,11 +14,10 @@ const init = () => {
     networkStatus: true,
     waitResponse: false,
     urlHaveRss: false,
+    inputType: null,
   };
+  const watchedState = watch(state);
 
-  const watchedState = onChange(state, () => {
-    render(state);
-  });
   controller(watchedState);
 };
 

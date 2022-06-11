@@ -1,7 +1,11 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-undef */
+import i18nextInstance from '../locales/index.js';
+
 const renderPosts = (data, postsConteiner) => {
   postsConteiner.innerHTML = '';
   const feedsHeader = document.createElement('h2');
-  feedsHeader.textContent = 'Посты';
+  feedsHeader.textContent = i18nextInstance.t('headers.posts');
 
   postsConteiner.append(feedsHeader);
 
@@ -31,7 +35,7 @@ const renderPosts = (data, postsConteiner) => {
     button.setAttribute('data-id', id);
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
-    button.textContent = 'Просмотр';
+    button.textContent = i18nextInstance.t('headers.button');
     cardConteiner.append(postsLink, button);
     postsConteiner.append(cardConteiner);
   });

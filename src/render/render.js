@@ -33,10 +33,8 @@ const renderValidInput = () => {
   form.reset();
 };
 
-const renderInput = (inputStatus, state) => {
-  const { inputType } = state;
-
-  switch (inputType) {
+const renderInput = (inputStatus) => {
+  switch (inputStatus) {
     case 'waitResponse':
       renerLoadInput();
       break;
@@ -44,46 +42,22 @@ const renderInput = (inputStatus, state) => {
       renderValidInput();
       break;
     default:
-      renderInvalidInput(inputType);
+      renderInvalidInput(inputStatus);
       break;
   }
 };
 
-// const render = (state) => {
-//   const {
-//     posts, feeds, invalidKey,
-//   } = state;
-
-//   if (state.waitResponse) {
-//     renerLoadInput();
-//   }
-
-//   if (invalidKey) {
-//     renderInvalidInput(invalidKey);
-//     return;
-//   }
-
-//   if (state.canRender === true) {
-//     renderValidInput();
-//     renderPosts(posts, postsConteiner);
-//     renderFeeds(feeds, feedsConteiner);
-//   }
-//   renderModal(state);
-// };
-
 const watch = (initialState) => onChange(initialState, (path, value) => {
+  const { posts, feeds } = initialState.content;
+
   if (path === 'inputType') {
-    // console.log(path, value, previousValue, applyData);
-    renderInput(value, initialState);
+    renderInput(value);
   }
-  if (path === 'urls' || path === 'posts' || path === 'feeds') {
-    renderFeeds(initialState.feeds, feedsConteiner);
-    renderPosts(initialState.posts, postsConteiner);
+  if (path.includes('content')) {
+    renderFeeds(feeds, feedsConteiner);
+    renderPosts(posts, postsConteiner);
   }
-  // console.log(path, value);
   renderModal(initialState);
 });
 
 export default watch;
-
-// export default render;

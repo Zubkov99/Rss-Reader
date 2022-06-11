@@ -3,33 +3,32 @@
 /* eslint-disable no-undef */
 import * as yup from 'yup';
 import axios from 'axios';
-// import _ from 'lodash';
 import parseXml from './parseXml.js';
+import updateState from './updateState.js';
 
 const readStream = (query, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
     .then((response) => {
       console.log('New request received');
-      parseXml(response, state, query);
-      // state.inputType = 'rssReceived';
-      // здесь новый ключ
-      state.canRender = true;
+      return parseXml(response);
+    })
+    .then((data) => {
+      updateState(state, data, query);
     })
     .catch((error) => {
+      if (error.message === 'Parse Error') {
+        state.inputType = 'rssMissing';
+        throw error;
+      }
       state.inputType = 'networkError';
-      // здесь новый ключ
-      state.invalidKey = 'networkError';
       throw error;
-    })
-    .finally(() => {
-      state.canRender = false;
     });
 };
 
 const getNewContent = (state) => {
   const timeToWait = 5000;
 
-  Promise.allSettled(state.urls.map(((item) => {
+  Promise.allSettled(state.content.urls.map(((item) => {
     readStream(item, state);
   })))
     .finally(() => {
@@ -49,26 +48,17 @@ const controller = (state) => {
       .then((data) => {
         if (!data) {
           state.inputType = 'invalidUrl';
-          // здесь новый ключ
-          state.invalidKey = 'invalidUrl';
           throw new Error('Is this an invalid link');
         }
-        if (state.urls.includes(url)) {
-          state.invalidKey = 'notUnique';
-          // здесь новый ключ
+        if (state.content.urls.includes(url)) {
           state.inputType = 'notUnique';
           throw new Error('Is this not a unique link');
         }
         return url;
       })
       .then((urlQuery) => {
-        state.waitResponse = true;
-        // здесь новый ключ
         state.inputType = 'waitResponse';
         readStream(urlQuery, state);
-      })
-      .finally(() => {
-        state.waitResponse = false;
       });
   });
 
@@ -77,10 +67,10 @@ const controller = (state) => {
     const { target } = event;
     const buttonsId = target.getAttribute('data-id');
     if (!buttonsId) return;
-    state.posts.forEach((item) => {
+    state.content.posts.forEach((item) => {
       if (item.id === buttonsId) item.isRead = true;
     });
-    state.modal = buttonsId;
+    state.modalId = buttonsId;
   });
 
   getNewContent(state);

@@ -10,7 +10,7 @@ const parseXml = (servResponse, model, query) => {
   console.log(doc);
   if (checkUrl(doc)) {
     model.invalidKey = 'rssMissing';
-    state.inputType = 'rssMissing';
+    model.inputType = 'rssMissing';
     // здесь новый ключ
     model.urlHaveRss = false;
     return;

@@ -6,8 +6,10 @@ import controller from './handler/controller.js';
 const init = () => {
   const initialState = {
     content: {
-      urls: [],
-      feeds: [],
+      feeds: {
+        urls: [],
+        feedsContain: [],
+      },
       posts: [],
     },
     modalId: null,

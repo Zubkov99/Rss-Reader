@@ -2,15 +2,16 @@
 import _ from 'lodash';
 
 const updateState = (state, data, query) => {
-  if (!state.content.urls.includes(query)) {
-    state.content.urls.push(query);
-  }
-  const feedTitle = data.querySelector('title').textContent;
-  const feedDescription = data.querySelector('description').textContent;
-  const posts = data.querySelectorAll('item');
+  const { urls } = state.content.feeds;
 
-  if (!_.find(state.content.feeds, { title: feedTitle, description: feedDescription })) {
-    state.content.feeds.push({ title: feedTitle, description: feedDescription });
+  if (!urls.includes(query)) {
+    urls.push(query);
+  }
+  const { feedTitle, feedDescription, posts } = data;
+  const { feedsContain } = state.content.feeds;
+
+  if (!_.find(feedsContain, { title: feedTitle, description: feedDescription })) {
+    feedsContain.push({ title: feedTitle, description: feedDescription });
   }
 
   posts.forEach((item) => {

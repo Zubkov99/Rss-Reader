@@ -5,9 +5,16 @@ import * as yup from 'yup';
 import axios from 'axios';
 import parseXml from './parseXml.js';
 import updateState from './updateState.js';
+import { mapping, errorHandler } from './errorHandler.js';
 
 const readStream = (query, state) => {
-  axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${query}`)
+  const proxy = 'https://allorigins.hexlet.app';
+  const params = { disableCache: true, url: query };
+  const proxyUrl = new URL('/get', proxy);
+  const searchParams = new URLSearchParams(params);
+  proxyUrl.search = searchParams.toString();
+
+  axios.get(proxyUrl)
     .then((response) => {
       console.log('New request received');
       return parseXml(response);
@@ -16,21 +23,32 @@ const readStream = (query, state) => {
       updateState(state, data, query);
     })
     .catch((error) => {
-      if (error.message === 'Parse Error') {
+      if (error instanceof mapping.parsingError) {
         state.inputType = 'rssMissing';
         throw error;
       }
-      state.inputType = 'networkError';
-      throw error;
+      if (error.isAxiosError) {
+        state.inputType = 'networkError';
+        throw error;
+      }
+      errorHandler();
     });
+};
+
+const sendRequests = (data, state) => {
+  const promises = data.map((item) => new Promise((resolve) => {
+    resolve(readStream(item, state));
+  }));
+  Promise.all(promises);
 };
 
 const getNewContent = (state) => {
   const timeToWait = 5000;
-
-  Promise.allSettled(state.content.urls.map(((item) => {
-    readStream(item, state);
-  })))
+  Promise.allSettled(state.content.feeds.urls)
+    .then((data) => data.map(({ value }) => value))
+    .then((data) => {
+      sendRequests(data, state);
+    })
     .finally(() => {
       setTimeout(() => getNewContent(state), timeToWait);
     });
@@ -47,12 +65,10 @@ const controller = (state) => {
     shema.isValid(url)
       .then((data) => {
         if (!data) {
-          state.inputType = 'invalidUrl';
-          throw new Error('Is this an invalid link');
+          errorHandler('invalidUrl', state);
         }
-        if (state.content.urls.includes(url)) {
-          state.inputType = 'notUnique';
-          throw new Error('Is this not a unique link');
+        if (state.content.feeds.urls.includes(url)) {
+          errorHandler('notUnique', state);
         }
         return url;
       })
@@ -72,7 +88,6 @@ const controller = (state) => {
     });
     state.modalId = buttonsId;
   });
-
   getNewContent(state);
 };
 

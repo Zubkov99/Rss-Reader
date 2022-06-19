@@ -1,5 +1,5 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-undef */
+/* eslint-disable no-param-reassign */
 import i18nextInstance from '../locales/index.js';
 
 const renderPosts = (data, postsConteiner) => {

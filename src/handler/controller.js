@@ -40,7 +40,9 @@ const controller = (state) => {
     });
     state.modalId = buttonsId;
   });
-  getNewContent(state);
+
+  const timeToWait = 5000;
+  getNewContent(state, timeToWait);
 };
 
 export default controller;

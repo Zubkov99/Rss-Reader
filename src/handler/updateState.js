@@ -1,6 +1,22 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 
+const addNewPosts = (data, state) => {
+  const { posts } = state.content;
+
+  data.forEach(({
+    contentId, link, title, description, isRead,
+  }) => {
+    if (!_.find(posts, {
+      link, title, description,
+    })) {
+      posts.push({
+        link, title, description, isRead, id: contentId,
+      });
+    }
+  });
+};
+
 const updateState = (state, data, query) => {
   const { urls } = state.content.feeds;
 
@@ -12,23 +28,9 @@ const updateState = (state, data, query) => {
 
   if (!_.find(feedsContain, { title: feedTitle, description: feedDescription })) {
     feedsContain.push({ title: feedTitle, description: feedDescription });
+    state.inputType = 'rssReceived';
   }
-
-  posts.forEach((item) => {
-    const contentId = _.uniqueId();
-    const link = item.querySelector('link').textContent;
-    const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
-    const isRead = false;
-    if (!_.find(state.content.posts, {
-      link, title, description,
-    })) {
-      state.content.posts.push({
-        link, title, description, isRead, id: contentId,
-      });
-      state.inputType = 'rssReceived';
-    }
-  });
+  addNewPosts(posts, state);
 };
 
 export default updateState;

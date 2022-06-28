@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import _ from 'lodash';
 import { errorHandler } from './errorHandler.js';
 
 const checkUrl = (document) => document.querySelector('parsererror');
@@ -16,13 +15,11 @@ const parseXml = (servResponse) => {
   const posts = [];
 
   doc.querySelectorAll('item').forEach((item) => {
-    const contentId = _.uniqueId();
     const link = item.querySelector('link').textContent;
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;
-    const isRead = false;
     posts.push({
-      contentId, link, title, description, isRead,
+      link, title, description,
     });
   });
   return { feedTitle, feedDescription, posts };

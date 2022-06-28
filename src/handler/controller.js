@@ -70,13 +70,18 @@ const controller = (state) => {
   });
 
   const postsConteiner = document.querySelector('.posts');
+
   postsConteiner.addEventListener('click', (event) => {
     const { target } = event;
+    const { posts } = state.content;
+
     const buttonsId = target.getAttribute('data-id');
+
     if (!buttonsId) return;
-    state.content.posts.forEach((item) => {
-      if (item.id === buttonsId) item.isRead = true;
-    });
+
+    const currentСontainer = posts.find((item) => item.id === buttonsId);
+    currentСontainer.isRead = true;
+
     state.modalId = buttonsId;
   });
 

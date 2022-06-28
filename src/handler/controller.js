@@ -73,14 +73,17 @@ const controller = (state) => {
 
   postsConteiner.addEventListener('click', (event) => {
     const { target } = event;
-    const { posts } = state.content;
+    // const { posts } = state.content;
 
     const buttonsId = target.getAttribute('data-id');
 
     if (!buttonsId) return;
 
-    const currentСontainer = posts.find((item) => item.id === buttonsId);
-    currentСontainer.isRead = true;
+    state.content.posts.forEach((item) => {
+      if (item.id === buttonsId) item.isRead = true;
+    });
+    // const currentСontainer = posts.find((item) => item.id === buttonsId);
+    // currentСontainer.isRead = true;
 
     state.modalId = buttonsId;
   });

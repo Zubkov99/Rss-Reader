@@ -5,15 +5,15 @@ const addNewPosts = (data, state) => {
   const { posts } = state.content;
 
   data.forEach(({
-    link, title, description,
+    contentId, link, title, description, isRead,
   }) => {
-    const isRead = false;
-    const id = _.uniqueId();
+    // const isRead = false;
+    // const id = _.uniqueId();
     if (!_.find(posts, {
       link, title, description,
     })) {
       posts.push({
-        link, title, description, isRead, id,
+        link, title, description, isRead, id: contentId,
       });
     }
   });
